@@ -77,13 +77,18 @@ docker-compose --version
 docker-compose version 1.18.0, build 8dd22a9
 ```
 ## docker-compose java项目目录规划
-### 1.文件目录解释
+### 1.环境描述
+* docker：18.06.1-ce
+* docker-comepose：1.18.0
+* vue 2 && npm 14.17.3
+* java1.8
+### 2.文件目录解释
 * config目录：config目录内放项目运行所需要挂载进容器的配置文件及数据文件
 * import-base-image目录：docker save所保留下的tar归档基础镜像文件，例：java:8、mysql:8、nginx:1.21.3等，还有docker load镜像的脚本
 * java目录：每个java项目在java目录内单独一个目录，目录内放置jar包、Dockerfile、build.sh（打包镜像所用脚本）
 * docker-compose.yml ： 我所理解的docker-compose.yml跟k8s内的资源清单一样，就是docker-compose编排配置文件
 * build_java_image.sh：进入到所有java项目目录内，把jar包打入docker镜像内
-### 2.目录层级展示
+### 3.目录层级展示
 ![image](https://user-images.githubusercontent.com/63449830/149712209-71e562da-2aba-465a-836b-e6910d7d8030.png)
 ![image](https://user-images.githubusercontent.com/63449830/149712340-11cb5f19-0f67-46f5-b0b2-45ff1bb0745c.png)
 
