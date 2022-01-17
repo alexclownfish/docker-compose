@@ -87,4 +87,9 @@ docker-compose version 1.18.0, build 8dd22a9
 ![image](https://user-images.githubusercontent.com/63449830/149712209-71e562da-2aba-465a-836b-e6910d7d8030.png)
 ![image](https://user-images.githubusercontent.com/63449830/149712340-11cb5f19-0f67-46f5-b0b2-45ff1bb0745c.png)
 
+## docker-compose常用命令
+* docker-compose ps ：查看运行容器
+* docker-compose up -d ：后台启动容器 && 资源清单有变化镜像有更新可以更新
+* docker-compose down -v : 关闭，下线
+
 
