@@ -1,0 +1,173 @@
+version: '3'
+
+networks:
+   data_security:
+      ipam:
+         config:
+         - subnet: 172.62.0.0/16            #自定义固定容器ip 实现容器间通讯，增强docker-compose项目可移植性
+
+services:
+  mysql:
+    image: mysql:8.0.20
+    container_name: mysql
+    ports:
+      - 30306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - MYSQL_ROOT_PASSWORD=xxxxxx
+    privileged: true
+    restart: always
+    volumes:
+      - ./config/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - ./config/mysql/logs:/var/log/mysql
+      - ./config/mysql/data:/var/lib/mysql
+      - ./config/mysql/init:/docker-entrypoint-initdb.d/
+      #- ./config/mysql/sql:/opt/sql              #初始化sql第一次启动mysql并导入数据可以将注释去掉，导完之后注释掉。
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.5
+
+  gateway-service:
+    image: gateway-service:1.0    
+    container_name: gateway-service
+    expose:
+      - 8999
+    privileged: true
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.6
+
+  group-module:
+    image: group-module:1.0
+    container_name: group-module
+    expose:
+      - 8890
+    privileged: true
+    restart: always
+    volumes:
+      - ./java/xxl-job/:/opt/
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.7
+
+  core4ct-module-system:
+    image: core4ct-module-system:1.0
+    container_name: core4ct-module-system
+    expose:
+      - 8080
+      - 30201
+    privileged: true
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.8
+
+  core4ct-gateway:
+    image: core4ct-gateway:1.0
+    container_name: core4ct-gateway
+    expose:
+      - 9000
+    privileged: true
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.9
+
+  #province-module:
+  #  image: province-module:1.0
+  #  container_name: province-module
+  #  expose:
+  #    - 8888
+  #  privileged: true
+  #  restart: always
+  #  environment:
+  #    - TZ=Asia/Shanghai
+  #    - LANG=en_US.UTF-8
+  #  networks:
+  #    data_security:
+  #      ipv4_address: 172.62.0.10
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    hostname: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./config/redis/conf/redis.conf:/etc/redis/redis.conf   #挂载redis.conf不然后续重启redis密码会失效
+      - ./config/redis/data:/data
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    command: ["redis-server","/etc/redis/redis.conf"]          #指定配置文件启动redis
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.13
+
+  xxl-job-admin:
+    image: xxl-job-admin:1.0
+    container_name: xxl-job-admin
+    ports:
+      - 30998:8998
+      #- 30988:9988
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.11
+
+  nginx:
+    image: nginx:1.21.3
+    container_name: nginx-group
+    ports:
+      - 30028:80
+    restart: always
+    volumes:
+      - ./config/nginx/:/etc/nginx/
+      - ./config/html/dist/:/usr/share/nginx/html/
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.12
+
+#  nginx-province:
+#    image: province-frontend:1.20.1
+#    container_name: nginx-province
+#    ports:
+#      - 30029:443
+#    restart: always
+#    volumes:
+#      - ./config/nginx-province/:/etc/nginx/
+#      - ./config/html-province/dist/:/usr/share/nginx/html/
+#    environment:
+#      - TZ=Asia/Shanghai
+#      - LANG=en_US.UTF-8
+#    networks:
+#      data_security:
+#        ipv4_address: 172.62.0.22
+#
