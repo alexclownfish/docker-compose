@@ -35,6 +35,9 @@ services:
         ipv4_address: 172.62.0.5
 
   gateway-service:
+    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+      context: ./java/gateway-service/
+      dockerfile: Dockerfile
     image: gateway-service:1.0    
     container_name: gateway-service
     expose:
@@ -49,6 +52,9 @@ services:
         ipv4_address: 172.62.0.6
 
   group-module:
+    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+      context: ./java/group-module/
+      dockerfile: Dockerfile
     image: group-module:1.0
     container_name: group-module
     expose:
@@ -65,6 +71,9 @@ services:
         ipv4_address: 172.62.0.7
 
   core4ct-module-system:
+    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+      context: ./java/core4ct-module-system/
+      dockerfile: Dockerfile
     image: core4ct-module-system:1.0
     container_name: core4ct-module-system
     expose:
@@ -80,6 +89,9 @@ services:
         ipv4_address: 172.62.0.8
 
   core4ct-gateway:
+    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+      context: ./java/core4ct-gateway/
+      dockerfile: Dockerfile
     image: core4ct-gateway:1.0
     container_name: core4ct-gateway
     expose:
@@ -126,6 +138,9 @@ services:
         ipv4_address: 172.62.0.13
 
   xxl-job-admin:
+    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+      context: ./java/xxl-job-admin/
+      dockerfile: Dockerfile
     image: xxl-job-admin:1.0
     container_name: xxl-job-admin
     ports:
