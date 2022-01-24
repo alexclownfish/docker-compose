@@ -4,7 +4,7 @@ networks:
    data_security:
       ipam:
          config:
-         - subnet: 172.62.0.0/16            #自定义固定容器ip 实现容器间通讯，增强docker-compose项目可移植性
+         - subnet: 172.62.0.0/16
 
 services:
   mysql:
@@ -21,7 +21,8 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
-      - MYSQL_ROOT_PASSWORD=xxxxxx
+      - LANGUAGE=en_US:en
+      - MYSQL_ROOT_PASSWORD=xxxx
     privileged: true
     restart: always
     volumes:
@@ -29,13 +30,13 @@ services:
       - ./config/mysql/logs:/var/log/mysql
       - ./config/mysql/data:/var/lib/mysql
       - ./config/mysql/init:/docker-entrypoint-initdb.d/
-      #- ./config/mysql/sql:/opt/sql              #初始化sql第一次启动mysql并导入数据可以将注释去掉，导完之后注释掉。
+      #- ./config/mysql/sql:/opt/sql
     networks:
       data_security:
         ipv4_address: 172.62.0.5
 
   gateway-service:
-    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+    build:
       context: ./java/gateway-service/
       dockerfile: Dockerfile
     image: gateway-service:1.0    
@@ -47,12 +48,13 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.6
 
   group-module:
-    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+    build:
       context: ./java/group-module/
       dockerfile: Dockerfile
     image: group-module:1.0
@@ -66,12 +68,13 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.7
 
   core4ct-module-system:
-    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+    build:
       context: ./java/core4ct-module-system/
       dockerfile: Dockerfile
     image: core4ct-module-system:1.0
@@ -84,12 +87,13 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.8
 
   core4ct-gateway:
-    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+    build:
       context: ./java/core4ct-gateway/
       dockerfile: Dockerfile
     image: core4ct-gateway:1.0
@@ -101,23 +105,10 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.9
-
-  #province-module:
-  #  image: province-module:1.0
-  #  container_name: province-module
-  #  expose:
-  #    - 8888
-  #  privileged: true
-  #  restart: always
-  #  environment:
-  #    - TZ=Asia/Shanghai
-  #    - LANG=en_US.UTF-8
-  #  networks:
-  #    data_security:
-  #      ipv4_address: 172.62.0.10
 
   redis:
     image: redis:latest
@@ -127,18 +118,19 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ./config/redis/conf/redis.conf:/etc/redis/redis.conf   #挂载redis.conf不然后续重启redis密码会失效
+      - ./config/redis/conf/redis.conf:/etc/redis/redis.conf
       - ./config/redis/data:/data
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
-    command: ["redis-server","/etc/redis/redis.conf"]          #指定配置文件启动redis
+      - LANGUAGE=en_US:en
+    command: ["redis-server","/etc/redis/redis.conf"]
     networks:
       data_security:
         ipv4_address: 172.62.0.13
 
   xxl-job-admin:
-    build:                                         #在docker-compose.yml文件中通过build指定上下文及dockerfile来进行构建镜像
+    build:
       context: ./java/xxl-job-admin/
       dockerfile: Dockerfile
     image: xxl-job-admin:1.0
@@ -150,6 +142,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.11
@@ -166,23 +159,47 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
     networks:
       data_security:
         ipv4_address: 172.62.0.12
 
-#  nginx-province:
-#    image: province-frontend:1.20.1
-#    container_name: nginx-province
-#    ports:
-#      - 30029:443
-#    restart: always
-#    volumes:
-#      - ./config/nginx-province/:/etc/nginx/
-#      - ./config/html-province/dist/:/usr/share/nginx/html/
-#    environment:
-#      - TZ=Asia/Shanghai
-#      - LANG=en_US.UTF-8
-#    networks:
-#      data_security:
-#        ipv4_address: 172.62.0.22
-#
+#########################nacos-config##############################
+  nacos:
+    image: nacos/nacos-server:v2.0.3
+    container_name: nacos-standalone-mysql
+    env_file:
+      - ./config/nacos-docker/env/nacos-standlone-mysql.env
+    volumes:
+      - ./config/nacos-docker/example/standalone-logs/:/home/nacos/logs
+      - ./config/nacos-docker/example/init.d/custom.properties:/home/nacos/init.d/custom.properties
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9555:9555"
+    depends_on:
+      - mysql-nacos
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
+    restart: on-failure
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.15
+  mysql-nacos:
+    container_name: mysql-nacos
+    image: nacos/nacos-mysql:5.7
+    env_file:
+      - ./config/nacos-docker/env/mysql.env
+    volumes:
+      - ./config/nacos-docker/example/mysql:/var/lib/mysql
+    ports:
+      - "30063:3306"
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
+    networks:
+      data_security:
+        ipv4_address: 172.62.0.16
