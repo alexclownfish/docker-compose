@@ -96,5 +96,6 @@ docker-compose version 1.18.0, build 8dd22a9
 * docker-compose ps ：查看运行容器
 * docker-compose up -d ：后台启动容器 && 资源清单有变化镜像有更新可以更新
 * docker-compose down -v : 关闭，下线
+* docker-compose up -d --build : 更新镜像
 
 
