@@ -2,9 +2,10 @@ version: '3'
 
 networks:
    data_security:
-      ipam:
-         config:
-         - subnet: 172.62.0.0/16
+     external: true
+      #ipam:
+      #  config:
+      #   - subnet: 172.62.0.0/16
 
 services:
   mysql:
