@@ -98,4 +98,28 @@ docker-compose version 1.18.0, build 8dd22a9
 * docker-compose down -v : 关闭，下线
 * docker-compose up -d --build : 更新镜像
 
+### docker网格优化
+以上项目启动时会自动生成一个docker网络，因为我们docker-compose.yml内定义了网络的子网，所以单项目正常使用起来也没什么问题。如果有多个项目多个docker-compose.yml的场景下，多个项目之间也有微服务需要通过docker内部网络进行通信，或者我们docker-compose down -v时这个网卡都会随着我们项目的关闭而被释放掉。介于这种情况我们需要在外建立一个docker网格并指定网卡，再通过docker-compose.yml使用此网卡，即可实现多项目、多docker-compose.yml互相通过内部调用微服务、单独启动关闭某个项目；以下是配置摘要：
+#### 创建docker网格
+```
+docker network create --driver bridge --subnet 172.62.0.0/16 --gateway 172.62.0.1 cq-data-security
+```
+#### 修改编排文件，多个docker-compose.yml配置方法一致
+docker-compose.yml
+```
+version: '3'
+
+networks:
+  cq-data-security:
+    external: true
+
+services:
+  mysql:
+    image: mysql:8.0.20
+    container_name: mysql
+    networks:
+      cq-data-security:
+        ipv4_address: 172.62.0.5
+```
+
 
