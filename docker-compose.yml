@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-   data_security:
+   cq-data-security:
      external: true
       #ipam:
       #  config:
@@ -33,7 +33,7 @@ services:
       - ./config/mysql/init:/docker-entrypoint-initdb.d/
       #- ./config/mysql/sql:/opt/sql
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.5
 
   gateway-service:
@@ -51,7 +51,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.6
 
   group-module:
@@ -71,7 +71,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.7
 
   core4ct-module-system:
@@ -90,7 +90,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.8
 
   core4ct-gateway:
@@ -108,7 +108,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.9
 
   redis:
@@ -127,7 +127,7 @@ services:
       - LANGUAGE=en_US:en
     command: ["redis-server","/etc/redis/redis.conf"]
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.13
 
   xxl-job-admin:
@@ -145,7 +145,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.11
 
   nginx:
@@ -162,7 +162,7 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.12
 
 #########################nacos-config##############################
@@ -186,7 +186,7 @@ services:
       - LANGUAGE=en_US:en
     restart: on-failure
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.15
   mysql-nacos:
     container_name: mysql-nacos
@@ -202,5 +202,5 @@ services:
       - LANG=en_US.UTF-8
       - LANGUAGE=en_US:en
     networks:
-      data_security:
+      cq-data-security:
         ipv4_address: 172.62.0.16
