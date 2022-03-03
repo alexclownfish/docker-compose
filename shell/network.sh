@@ -2,7 +2,7 @@ docker network create --driver bridge --subnet 172.62.0.0/16 --gateway 172.62.0.
 
 IsNetworkOk=`docker network ls | grep cq-data-security | awk {'print $2'}`
 
-sleep 2
+sleep 1
 
 if [ $IsNetworkOk == 'cq-data-security' ] 
 then 
